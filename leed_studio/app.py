@@ -652,11 +652,11 @@ class MainWindow(QMainWindow):
         reset_action.triggered.connect(self.reset_image_view)
         view_menu.addAction(reset_action)
         first_action = QAction("First frame", self)
-        first_action.setShortcut(QKeySequence.StandardKey.Home)
+        first_action.setShortcut("Home")
         first_action.triggered.connect(lambda: self.frame_slider.setValue(0))
         view_menu.addAction(first_action)
         last_action = QAction("Last frame", self)
-        last_action.setShortcut(QKeySequence.StandardKey.End)
+        last_action.setShortcut("End")
         last_action.triggered.connect(lambda: self.frame_slider.setValue(self.frame_slider.maximum()))
         view_menu.addAction(last_action)
 
