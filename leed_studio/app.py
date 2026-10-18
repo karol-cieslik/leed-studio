@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 import numpy as np
 import pyqtgraph as pg
-from PySide6.QtCore import Qt, QUrl, QSettings
+from PySide6.QtCore import Qt, QUrl, QSettings, QTimer
 from PySide6.QtGui import QAction, QKeySequence, QDesktopServices, QColor, QPen, QIcon
 from PySide6.QtWidgets import (
     QApplication, QFileDialog, QDoubleSpinBox, QFormLayout, QGroupBox, QHBoxLayout,
@@ -495,6 +495,31 @@ class MainWindow(QMainWindow):
         self._build_menus()
         self._install_shortcuts()
         self._restore_workspace()
+        QTimer.singleShot(0, self._load_first_run_example_if_needed)
+
+    def _load_first_run_example_if_needed(self):
+        """Put a safe practice stack on screen the first time the app is opened."""
+        settings = QSettings("LEED Studio", "LEED Studio")
+        if settings.value("onboarding/first_run_example_seen", False, type=bool):
+            return
+        sample = Path(__file__).resolve().parent / "data" / "sample_drifting_stack.tif"
+        if not sample.is_file():
+            return
+        self._load_image_path(str(sample), is_example=True)
+        if self.frames is None:
+            return
+        # These values are known for the simulated example only. Real data still
+        # requires the user to check its acquisition metadata.
+        self.energy_start.setValue(80.0)
+        self.energy_step.setValue(5.0)
+        self.energy_confirm.setChecked(True)
+        self.session_dirty = False
+        settings.setValue("onboarding/first_run_example_seen", True)
+        self.workflow_banner.setText(
+            "WELCOME  ·  A simulated practice stack is ready. Click a bright spot, then choose "
+            "‘Measure spot profile’. To make a curve, choose ‘Measure intensity vs energy’. "
+            "The demo axis is 80 eV + 5 eV per frame. Save/export to practise; this is not experimental data."
+        )
 
     def update_cursor_position(self, x, y):
         if self.frames is None:
