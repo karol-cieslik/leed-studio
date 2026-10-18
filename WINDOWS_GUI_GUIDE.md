@@ -8,10 +8,11 @@ The **Project** browser lists the loaded stack, calibration inputs, selected bea
 
 ## First session
 
-1. Choose **Try example** to explore with simulated data, or **Open data…** to load a real image/stack.
-2. Click near the centre of a bright diffraction spot.
-3. Choose **Measure spot profile** for a single-frame fit, or confirm the real energy start/step and choose **Measure intensity vs energy** for a stack.
-4. Inspect the curve, quality flags and fit residual. Save a `.leedproj` project before exporting results.
+The first time you open the app, a small simulated practice stack loads automatically. Click near the centre of a bright spot, then choose **Measure spot profile** or **Measure intensity vs energy**. The practice stack uses a known demo axis (80 eV start, 5 eV per frame) so you can try the full measurement flow without your own files.
+
+Review the curve, fit residual and any quality flags. Try **Save project…** and the CSV export buttons. The walkthrough is in [BEGINNER_WALKTHROUGH.md](BEGINNER_WALKTHROUGH.md). The example is synthetic, not an experimental result. Later, use **File → Try example data** to load it again, or **Open data…** for your own image/stack.
+
+For real data, enter the first-frame energy and step from your experiment records before confirming the axis. Do not use the demo values for your experiment.
 
 ## Workspace controls
 
