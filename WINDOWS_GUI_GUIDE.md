@@ -1,5 +1,7 @@
 # LEED Studio 0.11.1 — Windows GUI guide
 
+*For a newcomer: [README](README.md) → [current status](PROJECT_STATUS.md) → [roadmap](ROADMAP.md). This guide documents the GUI design and Windows commands; it does not imply completion of manual acceptance.*
+
 ## What changed
 
 LEED Studio now uses a Gwyddion-inspired workspace: the image remains central while the project browser, tools/settings, I(E) curve and fit residual are dockable panels. Panels can be moved, floated, closed, shown from **View**, and their layout is restored on the next launch. Use **View → Reset workspace layout** to return to the default arrangement.
@@ -32,9 +34,9 @@ The repository now includes a Windows PyInstaller build and Inno Setup installer
 4. The portable app appears at `dist\LEED Studio\LEED Studio.exe`.
 5. To create the installer, install Inno Setup 6 and run `iscc packaging\LEED-Studio.iss`. The installer is written to `release\LEED-Studio-Setup-0.11.1.exe`.
 
-Alternatively, push the project to GitHub and run **Actions → Windows application build → Run workflow**. Tag pushes such as `v0.11.1` also trigger a build. The workflow runs tests on Windows, builds the app, attempts executable and installer acceptance checks, and uploads portable ZIP and installer artifacts to the workflow run. It does not automatically publish a GitHub Release.
+Alternatively, visit GitHub **Actions → Build LEED Studio for Windows → Run workflow**. The checked-in workflow triggers on **pushes to `main`** or manual dispatch; **tag pushes alone are not configured**. It installs dependencies, builds a portable PyInstaller folder and uploads the **LEED-Studio-Windows** artifact. It does **not** run tests or executable/installer acceptance checks, and does not create a GitHub Release. [A successful build artifact exists](https://github.com/karol-cieslik/leed-studio/actions/runs/38743872970), but still needs to be run and manually accepted on Windows.
 
-**Build status:** this source bundle contains the build configuration, but the actual Windows binary has not been generated in this Linux environment. Qt/PyInstaller installation required network access, which was unavailable here. The GitHub Actions workflow must run on a Windows runner to produce and validate the real `.exe`.
+**Build status (26 October 2026):** GitHub Actions successfully built and uploaded a Windows portable application on 15 October. That confirms packaging only; it does not confirm that the frozen EXE launches or works interactively. An installer recipe exists but has not been built/verified by the current workflow. See [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 ## Scientific caution
 
