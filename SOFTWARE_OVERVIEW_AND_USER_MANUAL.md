@@ -5,6 +5,8 @@
 **Platform:** Windows 10/11 (intended), Python source also supports other platforms where Qt dependencies work  
 **License:** GNU General Public License v3 or later (GPL-3.0-or-later)
 
+> **Current GitHub verification (26 October 2026):** A Windows **portable executable was built and uploaded** in [Actions run 38743872970](https://github.com/karol-cieslik/leed-studio/actions/runs/38743872970), but that job did **not** run application tests, launch the frozen executable, or make an installer. Earlier sections of this manual describe what source/build scripts are designed to support; they are not certification of the current binary. For exact status, see [PROJECT_STATUS.md](PROJECT_STATUS.md); for next steps, see [ROADMAP.md](ROADMAP.md).
+
 ## 1. What LEED Studio is
 
 LEED Studio is a desktop application for exploring low-energy electron diffraction (LEED) images and image stacks. It is designed to help a researcher load images, inspect diffraction spots, estimate a spot profile, follow a selected spot across frames, plot an intensity-versus-energy curve (I(E)), inspect questionable measurements, and export the data and settings used.
@@ -86,7 +88,7 @@ When a Windows release artifact is available, extract the `LEED-Studio-Portable-
 
 Run `LEED-Studio-Setup-0.11.1.exe`, follow the installer, and launch LEED Studio from the Start menu. The installer is designed for a per-user installation and does not need administrator privileges by default.
 
-**Release availability note:** the source package contains a Windows build pipeline. A Windows `.exe` or installer should only be described as released after the Windows CI workflow has successfully built and tested it. A source ZIP is not itself a Windows executable.
+**Release availability note:** GitHub Actions successfully produced a portable Windows artifact on 15 October 2026, but did **not** test its startup or GUI. Download the `LEED-Studio-Windows` artifact from [the latest run](https://github.com/karol-cieslik/leed-studio/actions/runs/38743872970) and extract its `dist` folder; keep the `LEED Studio` folder and adjacent `_internal` content together. There is **no verified public installer or published GitHub Release** as of this audit. A source ZIP is not itself a Windows executable.
 
 ### Option C — run from source
 
@@ -255,9 +257,9 @@ Build on Windows, preferably Windows 11 with Python 3.12:
 6. Test the portable executable on a clean Windows user profile and a second machine if possible.
 7. Test the installer, Start-menu launch, uninstall, file dialogs, project save/open, CSV export, high-DPI scaling and a real image stack.
 
-The GitHub Actions workflow `.github/workflows/windows-build.yml` automates the unit tests, Qt offscreen smoke test, PyInstaller build, frozen-EXE self-test, normal startup check, installer build, installation test and uninstallation test. Run it through GitHub Actions after pushing this source tree to a repository. The workflow cannot produce artifacts until it has actually run on a Windows runner.
+The **current checked-in** GitHub Actions workflow `.github/workflows/windows-build.yml` only checks out source, configures Python 3.11 on Windows, installs dependencies, runs `pip check`, builds with PyInstaller and uploads the `LEED-Studio-Windows` folder artifact. [The latest run](https://github.com/karol-cieslik/leed-studio/actions/runs/38743872970) succeeded. Unlike `build_windows.bat` and earlier documented workflow plans, it does **not** run unit/Qt tests, self-test the frozen executable, build an installer, or test install/uninstall. These are future release-acceptance tasks, not passed steps. Also note that at least two assertions in `tests/test_release_packaging.py` still expect the former more extensive CI and must be reconciled before the present `main` suite can be considered green.
 
-The `--self-test-gui` command verifies that the bundled application can create its Qt window, locate and load its packaged sample TIFF, fit a spot, and produce an I(E) result table. This is a packaging smoke test on simulated data, not a scientific validation.
+The `--self-test-gui` command is implemented in source to check that a Qt window opens, the bundled synthetic TIFF loads, a spot fits, and an I(E) table is produced. **Its presence does not show that it was run on the GitHub-built artifact.** When run successfully, this is a packaging smoke test on simulated data, not a scientific validation.
 
 ## 13. Research references and acknowledgements
 

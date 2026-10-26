@@ -1,5 +1,7 @@
 # Changelog
 
+> **Historical change descriptions, not current CI certification.** The GitHub workflow currently checked into `main` was simplified after the 0.11.1 notes below: it builds and uploads a Windows portable folder but does **not** run the tests/self-tests or installer steps described in this historical entry. See [PROJECT_STATUS.md](PROJECT_STATUS.md) (audit 26 October 2026) for the actual executed steps. Preserve historical descriptions to explain how the project evolved.
+
 ## 0.11.1 — Windows executable acceptance checks and full user documentation
 
 - Added a non-interactive `--self-test-gui` entrypoint that opens the Qt application, loads the bundled simulated TIFF, performs a spot-profile fit and an I(E) workflow, and checks the resulting data.
