@@ -1,61 +1,73 @@
 # LEED Studio 0.11.1
 
-LEED Studio is a standalone LEED image-analysis prototype built with PySide6 and pyqtgraph. The GUI now uses a Gwyddion-inspired scientific workspace: a central image viewer with dockable project browser, tools/settings, I(E) curve and fit-residual panels.
+LEED Studio is a desktop prototype for exploring **low-energy electron diffraction (LEED)** pictures and image stacks. It lets you select **one** diffraction spot, examine its shape, follow it across frames, estimate an intensity-versus-energy **I(E)** curve, inspect warnings, save work and export results.
 
-**Scientific status:** exploratory research software, not a validated replacement for ViPErLEED Spot Tracker. Do not treat results as publication-grade measurements without independent validation against experimental reference data.
+**In plain language:** this is real software with implemented scientific-analysis methods, **not yet a validated measurement tool or a fully tested public Windows release**.
 
-## Highlights in 0.11.1
+> **Where should I start?** [What is finished and what is not?](PROJECT_STATUS.md) · [What to do next?](ROADMAP.md) · [How the code works](DEVELOPER_GUIDE.md) · [Documentation map](DOCUMENTATION_INDEX.md)
 
-- Dockable scientific workspace with persistent window/dock layout.
-- Project data browser for image stack, calibration inputs, selected beam and analysis outputs.
-- Linked curve/frame navigation and an image cursor readout showing pixel coordinates and working intensity.
-- Beginner mode and resettable default workspace layout.
-- Native-looking toolbar icons and panel visibility actions.
-- Windows PyInstaller spec, local build script, Inno Setup installer recipe and GitHub Actions Windows build workflow.
+## Try it in four steps
 
-## Quick start on Windows (source)
+1. Start the application and click **Try example** to load the included *simulated* image stack (or **Open data…** for your own picture/TIFF stack).
+2. Click near the centre of a visible diffraction spot.
+3. Choose **Measure spot profile** to fit one frame; or enter and explicitly confirm the **real** energy start/step, then choose **Measure intensity vs energy** for the stack.
+4. Inspect the fit residual, I(E) curve, quality flags and questionable frames. Save a `.leedproj` project; export CSV plus its settings sidecar after checking results.
 
-1. Install Python 3.11 or 3.12 from python.org.
-2. Extract the complete source ZIP.
-3. Run `install_windows.ps1` in PowerShell. To run later, double-click `run_windows.bat`.
+The example is synthetic practice data—not an experimental benchmark. For a fuller explanation of correction options, coordinates, caveats and result meanings, read the [software overview and user manual](SOFTWARE_OVERVIEW_AND_USER_MANUAL.md).
 
-## Build a standalone Windows executable
+**Note on first launch:** the current `main` branch requires you to click **Try example**. An automatic first-launch example and beginner walkthrough are proposed in [open PR #1](https://github.com/karol-cieslik/leed-studio/pull/1); they are **not merged**.
 
-For a local build, install Python 3.12 and run `build_windows.bat`. This creates `dist\LEED Studio\LEED Studio.exe`. Install Inno Setup 6 and run `iscc packaging\LEED-Studio.iss` to create `release\LEED-Studio-Setup-0.11.1.exe`.
+## What exists today?
 
-A GitHub Actions workflow (`.github/workflows/windows-build.yml`) is configured to run unit and offscreen Qt tests, build the Windows application, execute a frozen-EXE workflow self-test, check normal startup, build the installer, test installation/uninstallation, and upload artifacts. Run it manually from the Actions tab or push a version tag such as `v0.11.1`. These steps are **configured but not yet verified by a successful Windows run**; the workflow uploads artifacts and does not automatically publish a GitHub Release. A real interactive test on a Windows desktop is still recommended.
+| Area | Short answer |
+|---|---|
+| Desktop UI | Dockable Qt/pyqtgraph workspace, image viewer, curve/table and residual panel exist in source |
+| Analysis | Single-spot Gaussian fit, local tracking, aperture/annulus intensity and basic corrections exist; synthetic tests cover core cases |
+| Persistence | `.leedproj` project archives, CSV and provenance JSON sidecars exist |
+| Windows | [GitHub Actions successfully built](https://github.com/karol-cieslik/leed-studio/actions/runs/38743872970) a portable executable artifact |
+| Still missing | Frozen executable acceptance, verified installer, full current CI test pass, interactive Windows checks and experimental-data accuracy validation |
+| Future scope | Robust overlapping/multi-beam tracking, indexing, large-stack streaming, broader calibration and scientific reference benchmarking |
 
-See `SOFTWARE_OVERVIEW_AND_USER_MANUAL.md` for the full software description, scientific basis, inspirations, limitations and user guide. See `WINDOWS_GUI_GUIDE.md` for dock controls and shortcuts.
+See [PROJECT_STATUS.md](PROJECT_STATUS.md) for the evidence behind each entry and the distinction between “code present”, “historically tested” and “actually verified”.
 
-## Documentation map and evidence status
+## Download / run
 
-- **Current release status:** `VALIDATION_RESULTS_0_11_1.md`, `RELEASE_READINESS_CHECKLIST.md`, and `WINDOWS_MANUAL_ACCEPTANCE_CHECKLIST.md`.
-- **Historical implementation records:** `TECHNICAL_AUDIT.md` (0.9.0), `PUBLIC_DATA_BENCHMARK.md` (historical 0.9.0 benchmark plan/results), `VALIDATION_RESULTS.md` (0.10.0), and `GUI_RELEASE_AUDIT_0_11_0.md` (0.11.0). These records are retained for provenance and are not fresh acceptance evidence for 0.11.1.
-- **Release notes:** `RELEASE_NOTES_DRAFT_0_11_1.md` is a draft, not a published release announcement.
+### Windows portable build (unverified interactive behavior)
 
-The current 0.11.1 source has not yet passed Windows CI/manual acceptance, and the real experimental-data benchmark remains outstanding. Do not tag or describe this snapshot as a verified Windows or scientifically validated release until those gates are completed.
+Open [the latest successful Windows Actions run](https://github.com/karol-cieslik/leed-studio/actions/runs/38743872970) and download **LEED-Studio-Windows** under Artifacts (GitHub sign-in may be required). Extract the artifact; look inside its `dist` contents for the **LEED Studio** folder and `LEED Studio.exe`. Keep the accompanying `_internal` files with it.
 
-## Measurement workflow
+The packaging job ran successfully on 15 October 2026, but **did not execute the frozen EXE or perform GUI tests**. Treat the download as an experimental build, not an accepted release. There is no confirmed published installer or GitHub Release.
 
-1. Open data or use **Try example** (simulated data only).
-2. Click near the centre of a bright diffraction spot.
-3. Run **Measure spot profile** or confirm the real energy axis and run **Measure intensity vs energy**.
-4. Review fit validity and flagged frames; save a `.leedproj` project and export CSV only after review.
+### Run from source
 
-## Tests
+Use Python 3.11 or 3.12 with the declared dependencies. From a source checkout:
 
 ```powershell
-python -m pytest -q
+python -m pip install -e ".[dev]"
+python -m leed_studio
 ```
 
-The optional Qt smoke test runs only when PySide6 and pyqtgraph are installed. The Windows Actions workflow installs the GUI dependencies and runs tests offscreen, then exercises the frozen EXE against the bundled simulated TIFF. A real interactive test on a Windows desktop is still recommended, especially for high-DPI scaling and dock dragging.
+On Windows, `install_windows.ps1` sets up a virtual environment and starts the app; `run_windows.bat` starts it later. See [WINDOWS_GUI_GUIDE.md](WINDOWS_GUI_GUIDE.md) for UI and packaging instructions.
 
-## Public experimental benchmark
+## What has actually been tested?
 
-The TU Wien Fe₂O₃ LEED-I(V) dataset, DOI [10.48436/hgg42-xss85](https://doi.org/10.48436/hgg42-xss85), is the intended public benchmark. The benchmark harness is in `tools/benchmark_tuwien_fe2o3.py`. No numerical agreement with real experimental outputs is claimed until the raw data and reference files are processed.
+An older 14 October 2026 source audit reported **47 passed, 1 skipped** (Qt unavailable). This is historical evidence, **not a rerun of the present GitHub checkout**. In fact, some packaging test assertions currently expect installer/self-test CI steps that are absent from the checked-in workflow, so a new passing result must not be assumed.
 
-## Licence
+The 15 October [Windows Actions run](https://github.com/karol-cieslik/leed-studio/actions/runs/38743872970) installed dependencies and built/uploaded the portable app. Its current workflow did **not** run tests, the frozen app, or an installer. Consult [PROJECT_STATUS.md](PROJECT_STATUS.md) and [ROADMAP.md](ROADMAP.md) before describing release readiness.
 
-GPL-3.0-or-later. See `LICENSE` and `THIRD_PARTY_NOTICES.md`.
+## Scientific limits
 
-Project attribution and AI-assisted development provenance: [`CREDITS.md`](CREDITS.md).
+LEED Studio is **exploratory** and not a validated replacement for ViPErLEED Spot Tracker. The proposed real experimental comparison uses the [TU Wien Fe₂O₃ LEED-I(V) dataset](https://doi.org/10.48436/hgg42-xss85), but that comparison has not been completed. A previously reported 0.0054-pixel tracking RMSE came from a *synthetic* fixture, not this experimental dataset. Do not rely on LEED Studio measurements for publication without independent validation.
+
+The dockable interface takes **interaction inspiration from Gwyddion**; LEED Studio is an independent implementation, not a Gwyddion fork. ViPErLEED is a comparison reference, not a claimed equivalent.
+
+## For future readers / contributors
+
+- **[DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md):** where to find each guide.
+- **[PROJECT_STATUS.md](PROJECT_STATUS.md):** grounded inventory of implemented, unverified, PR-only and missing work.
+- **[ROADMAP.md](ROADMAP.md):** prioritized work with explicit acceptance criteria.
+- **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md):** architecture, algorithms, source file map, tests and data formats.
+- **[SOFTWARE_OVERVIEW_AND_USER_MANUAL.md](SOFTWARE_OVERVIEW_AND_USER_MANUAL.md):** detailed user guide and interpretation warnings.
+- **[CHANGELOG.md](CHANGELOG.md):** historical development record; current CI behavior is defined by the actual workflow.
+
+License: GPL-3.0-or-later ([LICENSE](LICENSE)). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [CREDITS.md](CREDITS.md) for dependencies, project direction and AI-assisted development provenance.
